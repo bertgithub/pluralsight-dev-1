@@ -1,0 +1,48 @@
+docker run -it ubuntu:latest /bin/bash
+ctrl-P-Q detaching from container
+docker stop container_id
+docker ps  -list of docker containers running
+docker kill -s <SIGNAL> -kill PID1
+docker ps -l ---last container to have run
+docker start container_id
+docker restart container_id
+
+PID 1 in the container is the process running the <command> for docker run
+
+docker rm container_id --delete a container
+docker inspect ---low level info about the container
+
+/var/lib/docker/containers/***/config.json   ---configuration of the container
+
+to get a shell inside a container
+docker inspect container_id | grep Pid
+nsenter -m -u -n -p -i -t Pid# /bin/bash
+OR
+docker-enter container_id
+OR
+docker exec -it container_id /bin/bash
+
+Dockerfile
+FROM ubuntu:15.04
+MAINTAINER brodrigu@nagra.com
+RUN apt-get update
+RUN apt-get install -y nginx
+CMD ["echo", "Hello World"]
+
+docker build -t helloworld:0.1 . -----building using Dockerfile
+
+docker run helloworld:0.1
+
+Repositories
+create a repository on docker hub
+docker tag image_id brodrigu/helloworld:1.0
+docker push brodrigu/helloworld:1.0
+
+docker pull brodrigu/helloworld:1.0
+
+private repository
+docker run -d -p 5000:5000 registry:2
+
+docker tag image_id ubuntu.docker.host:5000/testregistry
+
+docker push ubutnu.docker.host:50000/testregistry
