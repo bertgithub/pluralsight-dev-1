@@ -1,0 +1,15 @@
+REST Representational state transfer
+CRUD model -create,read,update,delete resources
+
+REST API are exposed in two directions
+Northbound & southbound
+Service consumers use northbound APIs
+Southbound Apis allow for further abstraction
+programmatic control of hardware and software
+
+minimum requirements
+identity services --keystone
+  provides authentication, authorization
+compute services
+image services
+networking services
