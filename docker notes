@@ -46,3 +46,63 @@ docker run -d -p 5000:5000 registry:2
 docker tag image_id ubuntu.docker.host:5000/testregistry
 
 docker push ubutnu.docker.host:50000/testregistry
+
+
+docker build -t="build1"
+
+mkdir web
+cd web
+Dockerfile
+#comment
+FROM ubuntu:15.04
+RUN apt-get update
+RUN apt-get install -y apache2
+RUN apt-get install -y apache2-utils
+RUN apt-get install -y vim
+#clean up apt-get cache
+RUN apt-get clean
+EXPOSE 80
+CMD ["apache2ctl", "-D", "FOREGROUND"]
+
+docker build -t="webserver"
+docker run -d -p 80:80 webserver
+docker ps
+
+Dockerfile
+#comment
+FROM ubuntu:15.04
+RUN apt-get update && apt-get install -y \
+  apache2 \
+  apache2-utils \
+  vim \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+EXPOSE 80
+CMD ["apache2ctl", "-D", "FOREGROUND"]
+
+only one CMD command in a Dockerfile, else only last one effective
+
+
+ENTRYPOINT echo
+docker build -t="test"
+docker run test HEllllllooo world
+The string is passed as an argument to the ENTRYPOINT command
+
+passing a variable to a container
+ENV name=var
+
+
+Volume ---allow datat to be stored outside a container, it persists even if the container is deleted
+docker run -it -v /test-vol --name=voltainer ubuntu:15.04 /bin/bash     ---creates a volume /test-vol in the container
+docker inspect voltainer   ----gives you the location of the volume on the host machine
+
+other containers can access this volume too
+docker run -it --volume-from=voltainer ubuntu:15.04 /bin/bash
+
+volume from a Dockerfile
+VOLUME /test-vol
+
+
+to delete a volume
+docker rm -v <container>
+
