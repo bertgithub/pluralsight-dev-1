@@ -106,3 +106,18 @@ VOLUME /test-vol
 to delete a volume
 docker rm -v <container>
 
+
+todo add networking
+
+starting docker deamon in debug
+docker -d -l debug& ---on console
+
+docker -d >> logfile 2>&1  ---redirect to file
+
+OR add the log level to the config file
+vi /etc/default/docker
+DOCKER_OPTS="--log-level=fatal"
+
+
+contianer logs
+docker logs -f imagename
