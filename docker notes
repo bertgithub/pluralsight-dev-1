@@ -45,7 +45,7 @@ docker run -d -p 5000:5000 registry:2
 
 docker tag image_id ubuntu.docker.host:5000/testregistry
 
-docker push ubutnu.docker.host:50000/testregistry
+docker push ubuntu.docker.host:50000/testregistry
 
 
 docker build -t="build1"
@@ -121,3 +121,57 @@ DOCKER_OPTS="--log-level=fatal"
 
 contianer logs
 docker logs -f imagename
+
+
+
+
+docker swarm
+---------------
+2 main services
+
+Discovery service
+key value store (etcd) 
+stores cluster state and config
+supports HA
+Can be a container
+
+Swarm Manager
+controls the cluster
+implements the swarm API
+supports HA
+can be a container
+
+
+filtering capability
+run containers on nodes with particular attributes or custom labels/tags
+
+
+scheduling capability
+Random
+Spread(default)
+Binpack  --run on nodes with smallest resources first, then move on the bigger nodes
+
+
+HA High availability
+
+deploy 3 vms on 3 physical hosts on separate racks on separate access switches
+
+create 2 networks
+1. management network --discovery service and swarm manager(on one VM) running both in containers
+2. production network  --regular nodes to run apps & services
+
+docker cli --> VM1 3375/3376(TLS)swarm ports
+docker swarm manager --> docker engine deamon on nodes 2375/2376(TLS)
+                     -->discover service 8500(consul)
+
+
+building a cluster
+step 1
+build the discovery service(consul, etcd, zookeeper)
+configure 3 containers(consul) for HA
+step2
+build the swarm managers
+configure 2 containers for HA
+install on same node as discovery service
+step3
+add nodes to the cluster
