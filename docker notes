@@ -1,3 +1,48 @@
+#installing ssh on ubuntu:16.04 VM
+sudo apt-get install openssh-server
+
+#check if ssh server is running
+systemctl status sshd
+
+#installing docker:
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo apt-get install software-properties-common python-software properties
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+apt-cache policy docker-ce
+
+#finally install docker
+sudo apt-get install -y docker-ce
+
+sudo systemctl status docker
+
+#executing docker command without sudo
+sudo usermod -aG docker ${USER}
+su - ${USER}
+id -nG
+sudo usermod -aG docker username
+
+
+#get jenkins docker image
+docker pull jenkins/jenkins:lts
+
+#running jenkins, workspace is stored in /var/jenkins_home
+docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts
+
+#get container id
+sudo docker ps   
+#enter the container shell
+docker exec -it container_id /bin/bash
+
+#from a browser run jenkins ip:8080
+installation passwd is found at /var/jenkins_home/secrets/initialAdminPassword
+
+#install suggested plugins
+
+
+-------------------------------------------------
+
 docker run -it ubuntu:latest /bin/bash
 ctrl-P-Q detaching from container
 docker stop container_id
@@ -119,7 +164,7 @@ vi /etc/default/docker
 DOCKER_OPTS="--log-level=fatal"
 
 
-contianer logs
+container logs
 docker logs -f imagename
 
 
