@@ -189,3 +189,36 @@ for( auto & v: c)
 {
   cout << "key=" << v.first << " value=" << v.second << endl;
 }
+
+
+string:
+auto s = string { "This is a string"};
+s = string(s, 4, 3); //"is "
+ASSERT(s == "is ");
+
+auto pos = s.find('s');
+auto sstr = s.substr(pos);
+ASSERT(sstr == "s is a string");
+
+auto trim(string const &s) ->string
+{
+  auto front = find_if_not(begin(s), end(s), isspace);
+  auto back = find_if_not(rbegin(s), rend(s), isspace);
+  //back returns reverse iterator
+  //back.base() return the 
+  
+  return string{ front, back.base() };
+}
+
+
+  //regex:
+  auto s = string { "call 877-808-2321 to reach me" };
+  auto r = regex { R"((\d{3})-(\d{3})-(\d{3}))"};
+  
+  auto m = smatch{};
+  ASSERT(m.empty()); //empty match results
+  //call search
+  ASSERT(regex_search(s, m, r)); //regex_search returns true/false if match exists
+  OR
+  ASSERT(!m.empty());
+  
