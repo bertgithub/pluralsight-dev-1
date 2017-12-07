@@ -222,3 +222,270 @@ auto trim(string const &s) ->string
   OR
   ASSERT(!m.empty());
   
+for( auto &sub : m)
+{
+  cout << sub.length() << &*sub.first << endl;
+}
+//will return 877-808-2321 first
+//then 877
+//then 808
+//then 2321
+
+auto output = m.format(R"($`<a href="link..."> $1 $2 $3</a?$`)");
+
+
+memory management:
+Forcing a class to be allocated on heap:
+class Person2
+{
+ //constructor, copy const and destructor are private
+ Person2(){};
+ Person2(const Person2& _){}
+ ~Person2() {}
+ 
+ int ref_count;
+public:
+  //use static factory method to allocate on heap
+  static Person2 * create()
+  {
+   auto *p = new Person2;
+   return p;
+  }
+  void add_ref() { ref_count++; }
+  void release()
+  {
+    if(--ref_count == 0)
+      delete this;
+  }
+};
+
+rvalue reference:
+int meaningOfLife() { return 42;}
+void move_rvalue()
+{
+  int a =0;
+  int &&y = meaningOfLife();
+  
+  Address book[100];
+  book[55] = Address("Paris"); //two copies exists here
+  book[55] = move(Address("Paris")); //only one copy exist
+  
+  auto swap = [] (int&a, int&b)
+  {
+    int tmp{a};
+    a= b;
+    b = tmp;
+  };
+  
+  int x= 2, z = 5;
+  swap (x, z);
+  
+  auto betterSwap = [] (int&a, int& b)
+  {
+    int tmp(move(a));
+    a = move(b);
+    b = move(tmp);
+    //there are no multiple allocations here
+  }
+  
+}
+
+unique_ptr:
+
+unique_ptr<Address> create_address(string const& city)
+{
+  return unique_ptr<Address>(new Address(city));
+  OR
+  return make_unique<Address>(city);
+}
+
+
+void test()
+{
+   auto a = create_address("Paris");
+   //a gets destroyed automatically
+   
+   auto v(a); //does not work, no operator() for unique
+   auto v = a; //does not work, no copy for unique
+   
+   auto v = move(a); //a gives up ownership of a
+   if(a)
+   {
+     //will not come here as a no longer owns the ptr
+   }
+   
+   Address *ptr = v.get();  //get the pointer
+   
+   Address *ptr = v.release();// release it ownership to ptr
+   Address *p;
+   ptr.reset(); //delete the owned object
+   OR
+   ptr.reset(p); //releases its ownership to p
+   
+}
+
+auto GetHen() -> unique_ptr<Hen>
+{
+  return make_unique<Hen>(2,3.9f);
+}
+void test()
+{
+   auto hen = GetHen(); //a unique pointer is created
+} // the hen object is destroyed.
+
+auto UpdateHen(unique_ptr<Hen>(hen) -> unique_ptr<Hen)
+{
+  hen->eggs += 1.4;
+  return hen;
+}
+
+void test()
+{
+   auto hen = GetHen(); //a unique pointer is created
+   
+   hen = UpdateHen(hen); // will not compile, no copy is allowed.
+   hen = Updatehen(move(hen)); //ok
+} // the hen object is destroyed.
+
+unique_ptr_deleter:
+  std::cout << "Custom deleter demo\n";
+  std::ofstream("demo.txt") << 'x'; // prepare the file to read
+  {
+      std::unique_ptr<std::FILE, decltype(&std::fclose)> fp(std::fopen("demo.txt", "r"),
+                                                            &std::fclose);
+      if(fp) // fopen could have failed; in which case fp holds a null pointer
+        std::cout << (char)std::fgetc(fp.get()) << '\n';
+  } // fclose() called here, but only if FILE* is not a null pointer
+    // (that is, if fopen succeeded)
+ 
+  std::cout << "Custom lambda-expression deleter demo\n";
+  {
+    std::unique_ptr<D, std::function<void(D*)>> p(new D, [](D* ptr)
+        {
+            std::cout << "destroying from a custom deleter...\n";
+            delete ptr;
+        });  // p owns D
+    p->bar();
+  } // the lambda above is called and D is destroyed
+ 
+
+shared_ptr:
+
+auto sp = shared_ptr<int> {};
+ASSERT(!sp); //it is not a valid pointer
+ASSERT(sp.use_count() == 0);
+sp = make_shared<int>(123);
+ASSERT(sp); //it is a valid pointer now
+ASSERT(sp.use_count() == 1);
+ASSERT(sp.unique()); //owned by one only.
+
+auto sp2 = sp;
+ASSERT(sp.use_count() == 2);
+ASSERT(!sp.unique()); //NOT owned by one only.
+ASSERT(sp2.use_count() == 2);
+ASSERT(!sp2.unique()); //NOT owned by one only.
+
+int copy = *sp;
+int *ref = *sp;
+int *ptr = sp.get();
+ASSERT(sp.get() == sp2.get());
+OR
+ASSERT(sp == sp2);
+
+shared_ptr  points to control block(contains: strong ref count, weak ref count, deleter)
+shared_ptr also points to the object
+
+weak_ptr:
+are great for breaking loops in data structures.
+they are used to refer to objects but only access it if the object exists,
+without preventing the object from being deleted.
+
+it always starts with a shared pointer.
+auto sp = make_shared<int>(123);
+auto wp = weak_ptr<int>{sp}; //init with a shared pointer
+
+ASSERT(!wp.expired()); //there is an outstanding shared pointer so it has not expired.
+ASSERT(wp.use_count() == 1); //NOTE this is the strong ref count of the shared pointer
+
+The above two methods are no guarantee that you have access to the shared pointer before you get a hold of it.
+
+if(auto locked = wp.lock())
+{
+  //lock method returns a new shared pointer with a strong reference count to the managed object
+  you can use the shared object here
+}
+
+sp = nullptr; //reset the original shared pointer
+ASSERT(wp.expired()); //the weak pointer is now expired
+ASSERT(wp.use_count() == 0); 
+
+if(auto locked = wp.lock())
+{
+  //lock method returns an empty ptr so will not come here
+  you cannot use the shared object here
+}
+else
+{
+  wp.reset(); //frees the control block, this is necessary
+}
+
+class Person3
+{
+public:
+  shared_ptr<Address> address;
+  
+  Person3(string const& city)
+  {
+     address = make_shared<Address>(city);
+  }
+  ~Person3()
+  {
+      //no need to destroy address, it is a smart pointer.
+  }
+}
+
+void test()
+{
+   shared_ptr<Address> a;
+   {
+      Person3 p("Paris");
+      a = p.address; //ref count is increased
+   } //p is destroyed, a ref_count is decremented  
+} //a is destroyed here
+
+variadic template:
+
+template<typename T, typename ...U>
+auto sum(T y, U ...u) ->decltype(t + sum(u...))
+{
+   return t + sum(u...);
+}
+// what if there is only one arg? the above would not work.
+need to declare for one arg
+template<typename T>
+T sum(T t) { return t; }
+
+void variadic()
+{
+   cout << sum(1,2,3,4) << endl;
+}
+
+metaprogramming:
+factorial
+
+template<int n> struct Factorial
+{
+  enum {value = n * Factorial<n-1>::value};
+};
+
+//now define the specific for factorial 0
+templatee <> struct Factorial<0>
+{
+   enum { value = 1 };
+};
+
+void metaprogramming()
+{
+  int x = Factorial<4>::value; //x=24 this value is already available prior to run time
+  int y = Factorial<0>::value;
+}
