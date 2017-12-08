@@ -1,4 +1,12 @@
 
+Big O:
+O(1) // always execute at the same time regardless of input size
+O(N) //algorithm whose performance is propotional to the size of input data set. e.g iterating using a for loop
+O(N**2) // n-squared an alogrithm whose performance is propotional to the square of the input data set, e.g nested for loop algos
+O(N**3  N**4...) //deeper nesting
+O(2**N) //algo whose growth doubles with each extra input data e.g. fibonacci numbers
+O(log N) // binary search, split the data and search
+
 //vector:
 auto c = vector<int>{1,2,3,4,5};
 
@@ -33,7 +41,7 @@ for (auto i = begin(c); i != end(c); i++)
   cout << *i << endl;
 }
 //OR reverse order
-for(auto i = rbeging(c); i != rend(c); i++)
+for(auto i = rbegin(c); i != rend(c); i++)
 {
   cout << *i << endl;
 }
@@ -48,6 +56,44 @@ c.size() //return size
 c.empty() //check if empty
 c.clear() //removes all elements
 reverse(begin(c), end(c)); //reverse the elements
+
+// inserting using generate_n algorithm
+int i = 0;
+vector<int> v = {};
+std::generate_n(back_inserter(v), 5, [&](){ return i++; });
+IS SAME AS
+for(i =0; i < 5; i++) { v.push_back(i); }
+
+// counting how many times value 3 appears  the vector
+int mycount = std::count(begin(v), end(v), 3);
+
+// erasing an item in an iterator
+for(auto it = begin(v); it != end(v); it++)
+{
+   if(*it == 3)
+      v.erase(it); //deleting the item invalidates the iterator, it cannot do a it++ to continue on
+}
+// erasing using remove_if
+auto endv2 = std::remove_if(begin(v), end(v), [](int n){ return n == 3; });
+//endv2 now points to an iterator at the end of the modified vector after removing all the elements with 3
+v.erase(endv2, end(v)); //will erase the excess elements
+//e.g v orig has 0,1,2,3,4,0,1,2,3,4
+// after remove_if v has 0,1,2,4,0,1,2,4,3,4 last 2 elems are left over from the orig vector
+//v.erase now erases these excess elements and the result will be 0,1,2,4,0,1,2,4
+OR
+v.erase(std::remove_if(begin(v), end(v), [](int n) { return n == 3; }), end(v));
+
+
+move semantics:
+//moving is much faster than copying
+//move constructor:
+Resource(Resource&& r) : name(move(r.name)) {}
+//move assignment operator
+Resource& operator=(Resource&& r)
+{
+  if(this != &r){name = move(r.name); r.name.clear();}
+  return *this;
+}
 
 list:
 doubly linked list
@@ -233,6 +279,29 @@ for( auto &sub : m)
 
 auto output = m.format(R"($`<a href="link..."> $1 $2 $3</a?$`)");
 
+lambda:
+using namespace std;
+vector<int> v{1,2,3,4,5};
+vector<int> doubleV(v.size());
+int factor = 2;
+transform(begin(v), end(v), begin(doubleV),
+  [=](int i){ i * factor; }
+); //end transform
+
+functor:
+A functor is pretty much just a class which defines the operator().
+
+struct add_x
+{
+  add_x(int x): x(x) {}
+  int operator()(int y) { return x+y; }
+private:
+  int x;
+};
+
+add_x add42(42); // struct is init to 42
+int i = add42(8); //call to add 8
+ASSERT(i == 50);
 
 memory management:
 Forcing a class to be allocated on heap:
@@ -469,6 +538,72 @@ void variadic()
 {
    cout << sum(1,2,3,4) << endl;
 }
+
+...u is called a parameter pack
+a parameter pack can be expanded OR counted.
+
+A variadic class template
+template<class ... types> struct Tuple {};
+e.g:
+Tuple<> t0; //no args
+Tuple<int> t1; //1 arg
+Tuple<int, float> t2; //2 args
+
+A variadic function template
+template<class ... types> void f(Types ... args);
+f(); //no args
+f(1); //1 arg
+f(2,1.0); //2 args
+
+template<typename Stream, typename... cols>
+class Printer
+{
+  public:
+    void output_line(const Columns&... cols);
+};
+
+void output_line(const Columns&... cols)
+{
+  write_line(validate(columns)...); //the compiler expands the parameter pack here and apsses each to validate function
+}
+//will get expanded to
+void output_line(const int& col1, const double& col2, const string& col3)
+{
+  write_line(validate(col1), validate(col2), validate(col3));
+}
+
+//working recursively with parameter packs
+template<typename value, typename ...values>
+void write_line(const value& val, const values&... values) const
+{
+  write_column(val, _sep);
+  write_line(values...);
+}
+
+//for last  value
+template<typename value>
+void write_line(const value& val) const 
+{
+  write_column(val, "\n");
+}
+
+//Another example of traversing template parameter types
+template<typename... types>  //allow zero parameters
+struct TupleSize;
+
+template<typename Head, typename... types>  //traverse types
+struct TupleSize<head, Tail...>
+{
+  static const size_t value = sizeof(Head) + TupleSize<Tail...>::value;
+};
+
+template<> struct TupleSize<>  //end recursion
+{
+  static const size_t value = 0;
+};
+
+Tuple<>::value; //0
+Tuple<int, double, char>::value; //13 on a 32 bit platform
 
 metaprogramming:
 factorial
