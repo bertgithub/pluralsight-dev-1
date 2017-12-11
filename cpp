@@ -7,6 +7,16 @@ O(N**3  N**4...) //deeper nesting
 O(2**N) //algo whose growth doubles with each extra input data e.g. fibonacci numbers
 O(log N) // binary search, split the data and search
 
+//volatile
+int some_int = 100;
+while(some_int == 100)
+{
+   //your code
+}
+When this program gets compiled, the compiler may optimize this code, 
+if it finds that the program never ever makes any attempt to change the value of some_int
+declaring it as 'volatile int' make sure that no optimization takes place.
+
 //vector:
 auto c = vector<int>{1,2,3,4,5};
 
@@ -623,4 +633,37 @@ void metaprogramming()
 {
   int x = Factorial<4>::value; //x=24 this value is already available prior to run time
   int y = Factorial<0>::value;
+}
+
+
+
+concurrency:
+
+template<typename C>
+auto sum(C const& c) -> typename C::value_type
+{
+  return accumulate(begin(c), end(c), 0);
+}
+
+template<typename C>
+auto product(C const& c) -> typename C::value_type
+{
+  return accumulate(begin(c), end(c), 1, [](int left, int right)
+  {
+    return left*right;
+  });
+}
+
+void test()
+{
+  auto vector<int> v = {1,2,3,4,5};
+  auto s = int{};
+  auto p = int{};
+  
+  parallel_invoke
+  (
+    [&] { s= sum(v);
+    [&] { p = product(v);
+  );
+  
 }
