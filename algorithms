@@ -1,0 +1,11 @@
+STL:
+
+count:
+int nos = count(begin(v), end(v), 2); //return the number of 2's in the vector.
+
+count_if:
+//count odd
+int odd = count_if(begin(v), end(v), [](int elem){ return elem % 2 != 0; });
+
+map<int, int> monthlengths{ {1,31},  {1,28}, {1,31}, {1,30}, {1,31}, {1,30}, {1,31}, {1,31}, {1,30}, {1,31}, {1,30}, {1,31}};
+int longmonths = count_if(begin(monthlengths), end(monthlenghts), [](auto elem) { return elem.second == 31});
