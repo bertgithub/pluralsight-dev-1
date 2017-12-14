@@ -28,7 +28,8 @@ sudo usermod -aG docker username
 docker pull jenkins/jenkins:lts
 
 #running jenkins, workspace is stored in /var/jenkins_home
-docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts
+mkdir /home/brodrigu/jenkins_home
+docker run -p 8080:8080 -p 50000:50000 -v /home/brodrigu/jenkins_home:/var/jenkins_home jenkins/jenkins:lts
 
 #get container id
 sudo docker ps   
