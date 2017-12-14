@@ -9,3 +9,86 @@ int odd = count_if(begin(v), end(v), [](int elem){ return elem % 2 != 0; });
 
 map<int, int> monthlengths{ {1,31},  {1,28}, {1,31}, {1,30}, {1,31}, {1,30}, {1,31}, {1,31}, {1,30}, {1,31}, {1,30}, {1,31}};
 int longmonths = count_if(begin(monthlengths), end(monthlenghts), [](auto elem) { return elem.second == 31});
+
+//check for odd nums
+bool all_of = all_of(begin(v), end(v), [] (int elem) { return elem % 2 != 0; });
+bool any_of = any_of(begin(v), end(v), [] (int elem) { return elem % 2 != 0; });
+bool none_of = none_of(begin(v), end(v), [] (int elem) { return elem % 2 != 0; });
+
+find_if_not // same as !find_if
+find_first_of //find first
+search //search for subsequence
+find_end //last occurence of subsequence
+search_n //n occurences of elem value
+adjacent_find //find first occurence of adjacent equal values.
+
+
+sort:
+by default uses operator<
+
+sort(begin(v), end(v));
+sort(begin(v), end(v), [](int elem1, elem2) { return elem1 > elem2; }); //sorting in decreasing order
+is_sorted //tells you if the collection is sorted.
+
+int high = *max_element(begin(v), end(v));
+int low = *min_element(begin(v), end(v));
+
+int positive = *upper_bound(begin(v), end(v), 0); //return the first element > 0
+int negative = *lower_bound(begin(v), end(v), 0); //return the first element < 0
+
+
+shuffle:
+#include<random>
+
+//create a collection e.g vector
+//create a random device
+random_device randomdevice;
+//create a mersenne twister to use as random generator
+mt19937 generator(randomdevice());
+//shuffle the collection
+shuffle(it1, it2, generator);
+
+partial sort:
+//for collection 1,5,4,2,9,7
+//calling partial sort for the first three elements returns 1,2,4,9,5,7 
+partial_sort(itf, itm, ite); //elems are sorted from first(itf) to middle(itm), other elems are unsorted
+
+is_sorted(it1, it2); returns iter of first unsorted elem
+partial_sort_copy(it1, it2, cit1, cit2); //sorted elems from it1-it2 are copied to cit1-cit2
+
+stable_sort:
+//if you want to sort a collection twice
+//first by salary using sort
+//next by name using stabe_sort
+//will result in a sorted collection by salary(members with same salary will be sorted by name)
+
+
+equal & mismatch:
+bool same = equal(begin(v), end(v), begin(v2), end(v2));
+
+auto firstchange = mismatch(begin(v), end(v), begin(v2));//takes only 3 iters
+//returns firstchange which is a pair of iters
+int avalue = *(firstchange.first);
+int bvalue = *(firstchange.second);
+
+//to get position firstchange.first-begin(v) OR firstchange.second-begin(v2)
+
+total of a collection:
+int total = accumulate(begin(v), end(v), 0) ; //0 is the init value
+//return accumulated even numbers only even
+int total = accumulate(begin(v), end(v),0/*init val*/ [](int total/*init value*/, int elem){ if(elem%2 == 0) return total + elem; return total; });
+
+//return elements multiplied
+int total = accumulate(begin(v), end(v),1/*init val*/, [](int total/*init value*/, int elem){ return total*elem; });
+
+
+
+
+nth element:
+//sorting elements according to position
+//e.g 1,5,4,2,9,7,3,8,2
+nth_element(begin(v), begin(v)+4, end(v));
+//will result in 1,2,2,3,(4),5,7,8,9. elems are sorted < (4) > 
+
+
+
