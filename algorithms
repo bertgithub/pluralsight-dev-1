@@ -90,5 +90,76 @@ nth element:
 nth_element(begin(v), begin(v)+4, end(v));
 //will result in 1,2,2,3,(4),5,7,8,9. elems are sorted < (4) > 
 
+copy:
+copy(begin(v), end(v), begin(v2));
+OR
+auto v3 = v;
 
+auto pos = find(being(v), end(v), 1); // find pos of 1
+vector<int> v4(v.size());
+//for v{3,6,1,0,-2,5};
+copy(begin(v), position, begin(bv4));
+//position points to end(not included
+//copying 3,6 only to v4
+
+copy_if(begin(v), end(v), begin(v4), [](int elem) { return elem%2 == 0});
+//results in 6,0,-2,0,0,0
+
+copy_n(begin(v), 3, begin(v4));
+//will copy the first 3 elems v->v4
+
+int position=1
+copy(begin(v), position+1, position+1);
+//for v{3,6,1,0,-2,5};
+will return 3,6,1,3,6,1
+
+copy_backword(begin(v), end(v), end(v4);
+
+remove elements does not change size.
+v.erase(remove(begin(v), end(v), 3), end(v)); //remove all elements with value 3, then erase the leftover
+
+
+filling collections:
+vector<int> v(10); //note you have to allocate first for fill, iota...
+fill(begin(v), end(v), 1); //fill all with 1
+fill_n(begin(v), 6, 2); //fill first 6 elems with 2
+//use include <numeric> for iota
+iota(begin(v), end(v),1); //starting with 1, fill each elem with +1 from previous
+
+//generate uses a lambda to fill the collection
+int index=10;
+generate(begin(v), end(v), [&index] () { return --index; });
+//fills with 9->0
+
+index = 1;
+generate_n(begin(v), 7, [index&]() { return index*2; });
+//fills 1,2,4,8....
+
+replace(begin), end(v), 2, 7); //replaces 2 with 7
+replace_if(begin(v), end(v), [](int elem){ return elem < 16; }, 7); //replace elements , 16 with 7
+
+transforming an element in place:
+transform(begin(v), end(v), [](int elem){ return elem*2; });
+transform(begin(v), end(v)-1, begin(v)+1, begin(v6), (int elem1, int elem2) { return elem2 - elem1; });
+
+removing duplicates
+v.erase(v.unique(begin(v), end(v)), end(v));
+
+//use unique_copy to copy all unique elements. note on sorted elements only
+unique_copy(begin(v), end(v), begin(v7));
+
+reversing elements
+reverse(begin(v), end(v));
+iter_swap(begin(v), end(v)-1)); //swapping elems first and last
+reverse_copy(begin(v), end(v), begin(v2));
+
+to fill without allocating first:
+vector<int> v;
+fill(back_inserter(v), 6, 2); //insert 6 elems with value 2
+generate_n(back_inserter(v), 10, [n=0]() mutable {return n++; }); //note: n=0 is the same as alias capture of n
+
+//inserting in front
+deque<int> v;
+fill(fron_inserter(v), 6, 2); //insert 6 elems with value 2
+generate_n(fron_inserter(v), 10, [n=0]() mutable {return n++; }); //note: n=0 is the same as alias capture of n
 
