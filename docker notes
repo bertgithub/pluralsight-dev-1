@@ -67,7 +67,56 @@ OR
 docker-enter container_id
 OR
 docker exec -it container_id /bin/bash
+--------------------------------------------------
+jenkins-master
 
+create a folder with only Dockerfile and plugins.txt
+
+run docker using Dockerfile
+FROM jenkins/jenkins:lts
+COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
+RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
+
+The following are the contents of the plugin.txt
+workflow-job:2.15
+blueocean-rest-impl:1.3.0
+parameter-separator:1.0
+uno-choice:1.5.3
+throttle-concurrents:2.0.1
+workflow-cps:2.41
+perforce:1.3.36
+cobertura:1.11
+envinject:2.1.5
+junit:1.21
+htmlpublisher:1.14
+analysis-core:1.92
+mailer:1.20
+p4:1.7.7
+script-security:1.34
+nodelabelparameter:1.7.2
+valgrind:0.27
+build-timeout:1.19
+ansicolor:0.5.2
+preSCMbuildstep:0.3
+timestamper:1.8.8
+copy-to-slave:1.4.4
+warnings:4.63
+rich-text-publisher-plugin:1.4
+
+docker build -t jenkinsmaster .
+
+//removed the following plugin ffrom plugin.txt
+//uno-choice:1.5.3 plugin is causing error:
+//Some plugins failed to download! Not downloaded: scriptler
+
+// docker run -p 8080:8080 -p 50000:50000 /home/localadmin/jenkins_home:/var/jenkins_home jenkins/jenkins:lts
+docker run -p 8080:8080 -p 50000:50000 -v /home/localadmin/jenkins_home:/var/jenkins_home jenkinsmaster
+//WARNING: Failed to scout hudson.plugins.cobertura.MavenCoberturaPublisher
+//java.lang.InstantiationException: java.lang.NoClassDefFoundError: hudson/maven/MavenReporter
+
+
+
+--------------------------------------------------
 Dockerfile
 FROM ubuntu:15.04
 MAINTAINER brodrigu@nagra.com
