@@ -1,0 +1,12 @@
+SOLID Principles:
+1. Single Responsibility principle(SRP)
+  A class should only have a single responsibility.
+2.Open-Closed Principle(OCP)
+  Entities should be open for extension but closed for modification.
+3. Liskov Substitution principle(LSP)
+  Object should be replaced with instances of their subtype without altering program correctness.
+4. Interface segregation principle
+  Many client-specific interfaces better than one general-purpose interface
+5. Dependencies Inversion Principle
+  Dependencies should be abstract rather than concrete.
+  
