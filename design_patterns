@@ -10,3 +10,9 @@ SOLID Principles:
 5. Dependencies Inversion Principle
   Dependencies should be abstract rather than concrete.
   
+Adapter:
+stack(LIFO) is a container adaptor:
+Bridge: decouples abstraction from implementation. 
+  Pimpl idiom?   pointer to implementation- Changing private member variables of a class does not require recompiling classes 
+Composite:
+Decorator:
