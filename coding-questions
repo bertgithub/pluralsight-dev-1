@@ -1,0 +1,26 @@
+1. swap bits i and j of a 64 bit integer.
+swap(long x, int i, int j)
+{
+//first check if bits i != j
+  if(((x>>i)&1) != ((x>>j)&1))
+  {
+    x ^= (1 << i) | (i << j);
+  }
+  
+ 2.reverse the bits of a number
+ unsigned int reverseBits(unsigned int num)
+{
+    unsigned int  NO_OF_BITS = sizeof(num) * 8;
+    unsigned int reverse_num = 0, i, temp;
+
+    for (i = 0; i < NO_OF_BITS; i++)
+    {
+        temp = (num & (1 << i));
+        if(temp)
+            reverse_num |= (1 << ((NO_OF_BITS - 1) - i));
+    }
+ 
+    return reverse_num;
+}
+
+3.
